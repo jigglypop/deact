@@ -1,4 +1,12 @@
-import { callStackStore, rerender, useStateStore } from ".";
+import {
+  addEffect,
+  afterHoookRender,
+  afterRender,
+  callStackStore,
+  componentStore,
+  render,
+  useStateStore,
+} from ".";
 
 // useState 찾기
 export const getUseState = (text) => {
@@ -35,14 +43,17 @@ export function useState(initState) {
       }, {})
     );
   hooks[hookName] = hooks[hookName] || initState;
-  const state = hooks[hookName];
   // setState(클로저 내의 클로저)
   const setState = (function (_value) {
-    let _i = i;
     const _hookName = hookName;
     return function (value) {
       hooks[_hookName] = value;
-      rerender(stack[1], id, true);
+      const { props } = componentStore.get(id);
+      console.log("stack1", stack[1]);
+      render(stack[1], id, true, props, null);
+      // // 렌더링 후처리
+      afterHoookRender();
+      addEffect();
     };
   })();
   stack[2].push(i);
