@@ -1,9 +1,16 @@
 export function Pagination() {
   return {
-    id: "dropdown",
+    id: "pagination",
     jsx: `
-      <div class="area" id="dropdown">
-          드롭다운을 이 영역에 구현해주세요
-      </div>`,
+      <div class="area" id="pagination">
+        <button class="arrow"><<</button>
+        <button style="color: red">1</button>
+        <button>2</button>
+        <button>3</button>
+        <button>4</button>
+        <button>5</button>
+        <button class="arrow">>></button>
+      </div>
+    `,
   };
 }

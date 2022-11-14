@@ -1,11 +1,8 @@
 import {
   addEffect,
-  afterHoookRender,
-  afterRender,
   callStackStore,
   componentStore,
   render,
-  useDecoilStateStackStore,
   useDecoilStateStore,
 } from ".";
 
@@ -31,7 +28,6 @@ export function useDecoilState(atom) {
   const callStack = callStackStore.get();
   const stack = callStack[callStack.length - 1];
   const id = stack[0];
-  // let i = stack[3].length;
   // 훅 이름 파싱함수
   const AtomName = atom.name;
   const AtomValue = atom();
@@ -39,29 +35,26 @@ export function useDecoilState(atom) {
   const hooks =
     useDecoilStateStore.get(AtomName) ??
     useDecoilStateStore.set(AtomName, {
-      stack: new Set(),
+      stack: [],
+      init: true,
       value: AtomValue,
     });
-  useDecoilStateStackStore.set(id);
   // setState(클로저 내의 클로저)
   const setState = (function (_value) {
     return function (value) {
       hooks.value = { ...value };
-      decoilRender();
+      decoilRender(AtomName);
     };
   })();
-  // stack[3].push(i);
+  if (hooks.init) hooks.stack.push(id);
   return [hooks.value, setState];
 }
 
-export function decoilRender() {
-  const store = Array.from(useDecoilStateStackStore.store);
-  for (let id of store) {
+export function decoilRender(AtomName) {
+  const stack = useDecoilStateStore.get(AtomName).stack;
+  for (let id of stack) {
     const { props, fn } = componentStore.get(id);
     render(fn, id, true, props, null);
-    // // 렌더링 후처리
-    afterHoookRender();
     addEffect();
-    useDecoilStateStackStore.clear();
   }
 }

@@ -1,7 +1,5 @@
 import {
   addEffect,
-  afterHoookRender,
-  afterRender,
   callStackStore,
   componentStore,
   render,
@@ -49,10 +47,7 @@ export function useState(initState) {
     return function (value) {
       hooks[_hookName] = value;
       const { props } = componentStore.get(id);
-      console.log("stack1", stack[1]);
       render(stack[1], id, true, props, null);
-      // // 렌더링 후처리
-      afterHoookRender();
       addEffect();
     };
   })();
